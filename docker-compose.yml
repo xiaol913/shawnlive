@@ -1,0 +1,50 @@
+version: "3"
+services:
+
+  db:
+    image: mysql
+    container_name: db
+    restart: always
+    expose:
+      - "3306"
+    ports:
+      - 3307:3306
+    command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --init-connect='SET NAMES utf8mb4;' --innodb-flush-log-at-trx-commit=0
+    volumes:
+      - ./db:/var/lib/mysql:rw
+    environment:
+      - MYSQL_DATABASE=itlwedding
+      - MYSQL_ROOT_PASSWORD=sd651134
+    networks:
+      - shawnlive
+
+  itlwedding:
+    build: ./itlwedding
+    container_name: itlwedding
+    restart: always
+    command: uwsgi -i /itlwedding/conf/uwsgi.ini
+    volumes:
+      - ./itlwedding:/itlwedding
+    ports:
+      - 8000:8000
+    links:
+      - db:db
+    networks:
+      - shawnlive
+
+  nginx:
+    container_name: nginx
+    build: ./nginx
+    restart: always
+    ports:
+      - "80:80"
+    volumes:
+      - ./itlwedding:/itlwedding
+    links:
+      - itlwedding:itlwedding
+    networks:
+      - shawnlive
+
+networks:
+    shawnlive:
+        external: true
