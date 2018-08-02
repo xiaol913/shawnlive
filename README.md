@@ -5,3 +5,6 @@ Quick Start
 
 
       /bin/bash sh -C build.sh
+
+Not update anymore on github,
+this project will update on Gitlab.
